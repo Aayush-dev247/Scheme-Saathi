@@ -1,26 +1,28 @@
 # 🌱 Scheme Saathi
-## AI-Powered Scholarship and Government Scheme Assistant
+### AI-Powered Scholarship and Government Scheme Assistant
 
-Scheme Saathi helps Indian students find and understand scholarship information using official government documents.
+Scheme Saathi helps Indian students understand scholarship information using official government documents.
 
 Students can ask questions in **English, Hindi, and Hinglish**. Answers include numbered citations, original source passages, official URLs, and physical PDF page numbers.
+
+The project includes an original **React interface**, a **Flask API**, and a **Streamlit custom component that preserves the React interface**.
 
 > Published guidelines do not confirm current application deadlines or individual eligibility. Always verify important details on official portals.
 
 ## Project Status
 
 - Reviewed corpus: **3 official source websites, 2 active PDFs, 1 webpage, and 25 indexed passages**.
-- Original interface: **Flask + React**.
-- Additional deployment interface: **Streamlit**.
-- Existing-project updater: **`update_scheme_saathi.py`**.
-- Prepared Streamlit edition: **45 automated tests passed**.
-- Hosted Streamlit deployment has not yet been verified.
-
-The Streamlit commands below require `streamlit_app.py` and the updated dependencies. The document updater alone does not install the Streamlit interface.
+- Original application: **Flask + React**.
+- Streamlit version: **original React UI connected to Python through a custom component**.
+- Document/backend updater: `update_scheme_saathi.py`.
+- React-to-Streamlit builder: `enable_original_ui.py`.
+- Compiled Streamlit frontend: `streamlit_ui/`.
+- Local layout and scrolling were manually checked during setup.
+- Hosted behavior of the final component version has not yet been verified.
 
 ## Problem Statement
 
-Scholarship information is scattered across government portals and lengthy PDF documents. Students often struggle to understand eligibility criteria, benefits, required documents, and application procedures.
+Scholarship information is scattered across government websites and lengthy PDF documents. Students often struggle to understand eligibility criteria, benefits, required documents, and application procedures.
 
 Language barriers and outdated documents make this information harder to use.
 
@@ -28,20 +30,23 @@ Language barriers and outdated documents make this information harder to use.
 
 Scheme Saathi uses Retrieval-Augmented Generation (RAG) to search a reviewed collection of official documents and generate answers supported by retrieved evidence.
 
-When information is unavailable, the assistant explicitly says it was not found. When generation is unavailable, it displays clearly labeled original source excerpts.
+If supporting information is unavailable, the assistant says it was not found. If generation is unavailable, it displays clearly labeled original source excerpts.
 
 ## Features
 
 - English, Hindi, and Hinglish questions.
 - Retrieval from reviewed official government documents.
-- Numbered citations linked to official sources.
-- Original source passages and exact physical PDF pages.
+- Numbered citations and original source passages.
+- Exact physical PDF page numbers.
+- Official source links.
 - Document dates and current-cycle uncertainty notices.
 - Groq and Gemini API adapters.
-- Source-excerpt fallback for missing keys or generation failures.
-- Streamlit chat interface with suggestions and sidebar history.
-- Session-specific conversations and copyable answers.
-- Original Flask API and React frontend retained.
+- Source-excerpt fallback for missing credentials or generation failures.
+- Original React interface with dark/light appearance.
+- Suggested questions and conversation history.
+- Copy-answer controls and citation dialogs.
+- Streamlit component bridge connecting React to the Python RAG engine.
+- Original Flask API retained.
 - Government-domain allowlist, robots checks, and rate-limited collection.
 - Explicit handling of unsupported personal-record questions.
 
@@ -51,38 +56,39 @@ Citation-ID validation checks that cited passages exist. It does not independent
 
 | Component | Technology |
 | --- | --- |
-| Language | Python 3.12 |
-| Additional interface | Streamlit |
-| Original backend | Flask |
+| Programming language | Python |
+| Tested Python version | 3.12 |
 | Original frontend | React, Vite, Tailwind CSS |
+| Backend API | Flask |
+| Additional deployment interface | Streamlit custom component |
 | Vector search | FAISS |
 | Embeddings | Sentence Transformers |
 | Embedding model | paraphrase-multilingual-MiniLM-L12-v2 |
 | Model runtime | CPU PyTorch |
 | PDF extraction | pypdf |
 | Website collection | Requests, BeautifulSoup |
-| Answer generation | Groq or Gemini |
+| Answer generation | Groq or Gemini API |
 | Alternative deployment | Docker / Hugging Face Spaces |
 
 ## Official Data Sources
 
-The bundled index contains **25 passages from three official websites**.
+The bundled index contains **25 passages from two active PDFs and one webpage across three official websites**.
 
 | Official website | Included material | Scope |
 | --- | --- | --- |
 | [National Scholarship Portal](https://scholarships.gov.in/) | PM-USP Central Sector Scholarship guidelines | Four-page PDF; applicability stated from academic year 2022–23 |
 | [Kerala Directorate of Technical Education](https://www.dtekerala.gov.in/) | Government-hosted AICTE Sarswati scholarship guidelines | Original 14-page circular retained; physical pages 10–14 indexed |
-| [myScheme](https://www.myscheme.gov.in/) | General portal description and discovery information | Public webpage; not a complete copy of its scheme directory |
+| [myScheme](https://www.myscheme.gov.in/) | Public portal description and discovery information | General portal information, not a complete scheme directory |
 
 ### Source Limitations
 
 - The included AICTE circular is dated May 2025.
-- Sarswati covers girl students in specified BBA/BCA/BMS courses, subject to all other conditions.
+- Sarswati guidelines cover girl students in specified BBA/BCA/BMS courses, subject to all other conditions.
 - A course name alone does not establish individual eligibility.
 - An older July 2019 CSSS PDF is retained with provenance but excluded from default retrieval.
 - Current application windows are not established by this corpus.
-- Document publication dates, collection timestamps, and application deadlines are different.
-- This project does not cover every scholarship on these portals.
+- Document dates, collection timestamps, and application deadlines are different.
+- Portal names displayed in the interface do not imply that every portal or scheme has been ingested.
 
 Collection outcomes are recorded in `data/collection_report.json`.
 
@@ -96,11 +102,13 @@ Collection outcomes are recorded in `data/collection_report.json`.
 6. Embed the student's question.
 7. Retrieve up to four relevant passages.
 8. Ask Groq or Gemini to answer from those passages.
-9. Validate citation IDs and display the original evidence.
+9. Validate citation IDs and display the answer with its evidence.
+
+Chunks do not cross physical PDF page boundaries.
 
 The embedding model produces 384-dimensional vectors. FAISS uses normalized vectors with `IndexFlatIP`.
 
-Displayed similarity scores are cosine similarity, not eligibility probabilities.
+Displayed scores are cosine similarity, not eligibility probabilities.
 
 ## Architecture
 
@@ -109,33 +117,51 @@ flowchart TD
     A["Official PDFs and public pages"] --> B["Page-aware extraction and chunks"]
     B --> C["Multilingual embeddings"]
     C --> D["FAISS and source metadata"]
-    E["Streamlit or Flask question"] --> F["Retrieve relevant evidence"]
-    D --> F
-    F --> G["Groq or Gemini"]
-    G --> H["Validate citation IDs"]
-    H --> I["Answer with original passages"]
-    F --> J["Labeled excerpts if generation unavailable"]
+
+    E["Original React interface"] --> F{"Application entry point"}
+    F --> G["Flask API"]
+    F --> H["Streamlit component bridge"]
+
+    G --> I["Python RAG engine"]
+    H --> I
+    D --> I
+
+    I --> J["Groq or Gemini"]
+    J --> K["Citation-ID validation"]
+    K --> L["Answer and original evidence"]
+    I --> M["Labeled excerpts if generation fails"]
 ```
 
-Only the public model and index are shared across Streamlit visitors. Chat messages remain in session-specific state.
+The Streamlit version embeds the React interface as a bidirectional component. Requests pass to Python through the component bridge rather than a separately running Flask server.
 
-Previous messages are not supplied as official evidence; questions are independent.
+API keys remain on the Python server.
+
+Previous conversation messages are not supplied as official evidence; questions are independent.
 
 ## Project Structure
 
 ```text
 Scheme-Saathi/
-├── streamlit_app.py
-├── START_STREAMLIT.bat
-├── .streamlit/
-│   ├── config.toml
-│   └── secrets.example.toml
 ├── app.py
+├── streamlit_app.py
+├── enable_original_ui.py
+├── update_scheme_saathi.py
 ├── rag.py
 ├── embedder.py
 ├── ingest.py
 ├── scrape.py
-├── update_scheme_saathi.py
+├── START_APP.bat
+├── streamlit_ui/
+│   ├── index.html
+│   └── assets/
+├── frontend/
+│   ├── src/
+│   │   ├── main.jsx
+│   │   └── style.css
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   └── vite.config.js
 ├── data/
 │   ├── pdfs/
 │   ├── scraped/
@@ -145,7 +171,6 @@ Scheme-Saathi/
 │   ├── vectors.faiss
 │   ├── metadata.json
 │   └── manifest.json
-├── frontend/
 ├── tests/
 ├── eval/
 │   ├── questions.json
@@ -162,46 +187,50 @@ Scheme-Saathi/
 
 ### Main Files
 
-| File | Purpose |
+| File / Folder | Purpose |
 | --- | --- |
-| `streamlit_app.py` | Streamlit interface using the existing RAG engine |
-| `app.py` | Original Flask API |
+| `app.py` | Original Flask API and React asset serving |
+| `streamlit_app.py` | Streamlit entry point and Python component request handling |
+| `enable_original_ui.py` | Builds the existing React interface as a Streamlit component |
+| `streamlit_ui/` | Compiled HTML, JavaScript, and CSS required for Streamlit deployment |
+| `update_scheme_saathi.py` | Existing-project backend, document, and index updater |
 | `rag.py` | Retrieval, generation, citation checks, and fallback handling |
 | `embedder.py` | Multilingual embedding model |
 | `ingest.py` | PDF extraction, chunking, and index creation |
 | `scrape.py` | Controlled collection of official public sources |
-| `update_scheme_saathi.py` | Existing-project backend, document, and index updater |
 | `eval/run_eval.py` | Evaluation runner |
 
-## Local Installation — Windows
+## Installation — Windows
 
 Use **Python 3.12**.
 
-Open Command Prompt inside the project folder.
+Node.js and npm are required when building the React frontend or rebuilding the Streamlit component. They are not required to run an already compiled Streamlit component.
+
+Open PowerShell inside the project folder.
 
 ### 1. Create a Virtual Environment
 
-```bat
-cd /d D:\Scheme-Saathi
+```powershell
+cd D:\Scheme-Saathi
 py -3.12 -m venv .venv
 ```
 
 ### 2. Install Dependencies
 
-```bat
+```powershell
 .venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-### 3. Create the Environment File
+### 3. Configure Environment Variables
 
 For a new installation:
 
-```bat
-copy .env.example .env
+```powershell
+Copy-Item .env.example .env
 notepad .env
 ```
 
-If `.env` already contains your working configuration, edit that file instead of replacing it.
+If `.env` already contains working credentials, edit that file instead of replacing it.
 
 Example configuration:
 
@@ -217,25 +246,25 @@ MIN_SCORE=0.35
 PORT=7860
 ```
 
-Use a model available to your provider account. Model availability can change.
+Use a model available to your provider account. Availability can change.
 
-The model value must contain only its ID:
+Write only the model ID as the value:
 
 ```dotenv
 GROQ_MODEL=openai/gpt-oss-120b
 ```
 
-Do not duplicate the assignment inside the value.
+Do not duplicate `GROQ_MODEL=` inside the value.
 
-For Gemini, set `LLM_PROVIDER=gemini` and configure the corresponding key and model.
+For Gemini, select `LLM_PROVIDER=gemini` and configure the corresponding key and model.
 
 **Never commit or share real API keys.**
 
-### 4. Start Streamlit
+## Run the Original UI Through Streamlit
 
-This requires the Streamlit edition's files and dependencies:
+If `streamlit_ui/index.html` and its compiled assets are included, start directly:
 
-```bat
+```powershell
 .venv\Scripts\python.exe -X utf8 -m streamlit run streamlit_app.py
 ```
 
@@ -247,19 +276,78 @@ http://localhost:8501
 
 Keep the terminal running. Press `Ctrl+C` to stop the application.
 
-After setup, `START_STREAMLIT.bat` provides an alternative Windows launcher.
-
 The first question may take longer while the embedding model downloads or loads.
 
-The reviewed FAISS index is included. Node.js and a React build are not required for the Streamlit interface.
+The reviewed FAISS index is included, so ingestion is not required for the initial launch.
 
 ### Without an API Key
 
-The application can retrieve real official passages in **Source excerpts** mode.
+Document retrieval remains available in **Source excerpts** mode.
 
-Those excerpts remain in their original language and are not presented as generated answers.
+These excerpts remain in their original language and are not presented as generated answers.
 
-## Local Installation — Linux/macOS
+## Build the Original UI for Streamlit
+
+`enable_original_ui.py` builds the existing React frontend and installs the Streamlit component wrapper.
+
+Place the helper beside `app.py` and run:
+
+```powershell
+.venv\Scripts\python.exe -X utf8 enable_original_ui.py
+```
+
+The helper:
+
+- Builds a temporary copy of the existing React frontend.
+- Adds the React-to-Python component bridge.
+- Creates the compiled `streamlit_ui/` folder.
+- Updates `streamlit_app.py`.
+- Ensures the Streamlit dependency is listed.
+- Backs up overwritten files.
+- Preserves `.env`, original frontend sources, documents, and the FAISS index.
+
+### Important Rebuild Note
+
+**Rebuilding replaces `streamlit_ui/` and `streamlit_app.py`.**
+
+Manual scrolling, frame sizing, or typography adjustments made to those generated files must be backed up and reapplied after rebuilding.
+
+The working component does not need to be rebuilt before every launch or deployment.
+
+### Interface and Conversation History
+
+The React interface retains its appearance controls, suggestions, citation dialogs, and conversation list.
+
+History is stored in browser local storage where available. It is not a server account or encrypted private record store.
+
+Questions are independent. Previous conversations are not used as official evidence.
+
+## Run the Original Flask and React Application
+
+Build the frontend:
+
+```powershell
+cd frontend
+npm ci
+npm run build
+cd ..
+```
+
+Start Flask:
+
+```powershell
+.venv\Scripts\python.exe -X utf8 app.py
+```
+
+Open:
+
+```text
+http://127.0.0.1:7860
+```
+
+The Flask and Streamlit entry points are alternatives. Starting Streamlit does not start the Flask HTTP API.
+
+## Installation — Linux/macOS
 
 ```bash
 python3.12 -m venv .venv
@@ -268,32 +356,25 @@ python -m pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edit `.env`, then start:
+Edit `.env`, then run:
 
 ```bash
 python -m streamlit run streamlit_app.py
 ```
 
-## Update an Existing Project
+The compiled `streamlit_ui/` folder must be present.
 
-`update_scheme_saathi.py` updates the existing project's backend, reviewed documents, and FAISS index.
+## Existing Project Data Update
 
-Place it in the project root beside `app.py`.
+`update_scheme_saathi.py` updates the backend, reviewed documents, and FAISS index.
 
-Stop the running application before applying the update:
+Stop running application processes, then run:
 
-```bat
-cd /d D:\Scheme-Saathi
+```powershell
 .venv\Scripts\python.exe -X utf8 update_scheme_saathi.py
 ```
 
-The updater:
-
-- Verifies its embedded update payload.
-- Installs updated backend files, documents, and index artifacts.
-- Backs up overwritten files.
-- Preserves existing `.env` and frontend files.
-- Does not install packages or automatically start the server.
+The updater verifies its payload, backs up overwritten files, and preserves the existing `.env` and frontend source files.
 
 Backups are stored under:
 
@@ -303,9 +384,7 @@ Backups are stored under:
 
 If the update has already completed successfully, running it again is unnecessary.
 
-**This updater does not install the Streamlit interface.** The Streamlit entry point and its dependencies must be added separately.
-
-The updater is a maintenance utility; it is not the application entry point for Streamlit Cloud.
+This updater does not install the Streamlit component. That is the role of `enable_original_ui.py`.
 
 ## Example Questions
 
@@ -326,90 +405,9 @@ The updater is a maintenance utility; it is not the application entry point for 
 - Scholarship ke liye kaunse documents chahiye?
 - Sarswati scholarship sirf girls ke liye hai kya?
 
-Answers depend on the indexed evidence.
+Answers depend on the available evidence.
 
-Personal application status is unavailable because this project does not access student accounts.
-
-## GitHub Upload
-
-Include:
-
-- Application source code.
-- `requirements.txt`.
-- Reviewed documents and provenance metadata.
-- All three index artifacts.
-- Tests and evaluation reports.
-- README and configuration examples.
-
-Exclude:
-
-```text
-.env
-.streamlit/secrets.toml
-.venv/
-__pycache__/
-node_modules/
-.scheme-saathi-backups/
-```
-
-The example files `.env.example` and `.streamlit/secrets.example.toml` must contain no real credentials.
-
-## Deploy on Streamlit Community Cloud
-
-1. Upload the project to GitHub.
-2. Open [Streamlit Community Cloud](https://share.streamlit.io/).
-3. Create an app from the repository and its actual branch.
-4. Set the entry point to:
-
-```text
-streamlit_app.py
-```
-
-5. Select Python **3.12**.
-6. Add your private configuration in the app's Secrets settings:
-
-```toml
-LLM_PROVIDER = "groq"
-GROQ_API_KEY = "your_private_key_here"
-GROQ_MODEL = "openai/gpt-oss-120b"
-MIN_SCORE = "0.35"
-```
-
-7. Deploy.
-8. Test a cited answer, a Hindi question, personal-status abstention, and official-source links before sharing.
-
-Do not use `app.py` or `update_scheme_saathi.py` as the Streamlit entry point.
-
-The hosting environment needs internet access to download the embedding model and contact the LLM provider.
-
-**Deployment status:** configuration is prepared; hosted deployment has not been verified in this workspace.
-
-## Original Flask and React Interface
-
-The original interface remains available as an alternative.
-
-Install Node.js and build the frontend:
-
-```bat
-cd frontend
-npm ci
-npm run build
-cd ..
-```
-
-Start Flask:
-
-```bat
-.venv\Scripts\python.exe -X utf8 app.py
-```
-
-Open:
-
-```text
-http://127.0.0.1:7860
-```
-
-Streamlit calls the RAG engine directly. Starting Streamlit does not start the Flask HTTP API.
+Personal application status is unavailable because the project does not access student accounts.
 
 ## Flask API Documentation
 
@@ -423,7 +421,7 @@ Readiness does not guarantee that an external API request will succeed.
 
 Accepts a JSON question of 1–1500 characters.
 
-Example request:
+Request:
 
 ```json
 {
@@ -439,7 +437,7 @@ Response fields:
 | `sources` | Retrieved passages and provenance |
 | `mode` | `rag`, `extractive`, `not_found`, or `refused` |
 
-Source metadata includes:
+Sources include:
 
 - Source filename and title.
 - Official URL.
@@ -457,7 +455,7 @@ Citation `[1]` refers to `sources[0]`.
 | --- | --- |
 | `rag` | Provider-generated output passed citation-ID validation |
 | `extractive` | Real excerpts shown because generation is unavailable or invalid |
-| `not_found` | Supporting information unavailable or request unsupported |
+| `not_found` | Supporting evidence unavailable or request unsupported |
 | `refused` | Detected instruction or secret-extraction request |
 
 ### HTTP Errors
@@ -468,56 +466,56 @@ Citation `[1]` refers to `sources[0]`.
 | 413 | Request body too large |
 | 503 | Retrieval index or model unavailable |
 
+The Streamlit bridge handles the interface's health and question requests internally. These are not public Flask HTTP endpoints when only Streamlit is running.
+
 ## Refresh Sources and Rebuild the Index
 
-```bat
+```powershell
 .venv\Scripts\python.exe -X utf8 scrape.py --manifest data/scholarship_sources.json
 .venv\Scripts\python.exe -X utf8 ingest.py
 ```
 
 Stop the application before replacing index files and restart afterward.
 
-Review collection errors, extracted text, document provenance, and applicability before publishing an update.
+Review collection errors, extracted text, provenance, and document applicability before publishing an update.
 
 The collector:
 
-- Uses an explicit government-host allowlist.
+- Uses a government-host allowlist.
 - Checks robots rules.
 - Rate-limits requests.
 - Bounds download sizes.
 - Skips access failures and ambiguous robots responses.
 - Does not bypass login or CAPTCHA.
 
-Scanned PDFs need a separate OCR workflow.
+Scanned PDFs require a separate OCR workflow.
 
 ## Testing and Evaluation
 
-### Automated Tests
+### Backend and Retrieval Tests
 
-The prepared Streamlit edition passed **45 tests**:
+The three-source backend update passed **38 tests**, including BCA retrieval regressions and PDF-page provenance checks.
 
-- 38 backend and retrieval tests.
-- 7 Streamlit tests.
+Run the tests included in the repository:
 
-Streamlit checks cover:
-
-- Initial rendering and source summary.
-- Real BCA retrieval and source expanders.
-- Personal-status abstention.
-- New conversations.
-- Session isolation.
-- Safe runtime errors.
-- Official-only citation links.
-
-Testing used Streamlit AppTest. Graphical browser and mobile-device validation are not claimed.
-
-Run:
-
-```bat
+```powershell
 .venv\Scripts\python.exe -X utf8 -m pytest -q
 ```
 
-### Recorded Development Evaluation
+### Original-UI Component Verification
+
+The original React component build completed successfully.
+
+During component development:
+
+- 17 Python backend/component tests passed.
+- JavaScript bridge checks passed for request queuing, response mapping, duplicate responses, abort handling, errors, and theme initialization.
+- Backend/component unit tests used a controlled engine substitute; they do not prove live LLM correctness.
+- Local interface sizing and scrolling were manually checked during setup.
+
+Development checks are not all bundled as repository tests. Hosted rendering, mobile behavior, and live provider reliability require separate verification.
+
+### Recorded Retrieval Evaluation
 
 The 36-question development evaluation used the 25-passage corpus without a live LLM.
 
@@ -538,7 +536,7 @@ Results are recorded in:
 eval/updated_results.json
 ```
 
-### Interpretation
+### Evaluation Interpretation
 
 - Retrieval checks use hand-authored evidence patterns.
 - Verbatim checks verify copied excerpts, not generated-answer correctness.
@@ -549,27 +547,108 @@ eval/updated_results.json
 
 Run evaluation:
 
-```bat
+```powershell
 .venv\Scripts\python.exe -X utf8 eval\run_eval.py --output eval\local-results.json
 ```
 
-A configured API key may cause evaluation to call the provider and consume quota.
+A configured API key may cause evaluation to contact the provider and consume quota.
 
 Independent review is required to measure semantic citation correctness and generated-answer faithfulness.
 
 ## Screenshots
 
-These screenshots show the original React interface.
+These images show the original React interface. Historical source details visible in older screenshots do not establish current scholarship rules.
 
 ### Landing Screen
 
-![Original React landing screen](docs/landing.jpg)
+![Scheme Saathi landing screen](docs/landing.jpg)
 
-### Citation Dialog
+### Dark Interface
 
-![Original React citation dialog](docs/citation.jpg)
+![Scheme Saathi dark interface](docs/dark.jpg)
 
-Streamlit screenshots will be added after capture from the running interface.
+### Citation Details
+
+![Original passage and source citation](docs/citation.jpg)
+
+## GitHub Upload
+
+Include:
+
+- Application source code.
+- `enable_original_ui.py`.
+- The complete compiled `streamlit_ui/` folder.
+- `requirements.txt`.
+- Reviewed documents and provenance metadata.
+- All three index artifacts.
+- Tests, evaluation reports, screenshots, and README.
+
+Exclude credentials, environments, caches, and backups.
+
+Example `.gitignore` entries:
+
+```gitignore
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.log
+.cache/
+node_modules/
+frontend/dist/
+.streamlit/secrets.toml
+.scheme-saathi-backups/
+*.zip
+
+!streamlit_ui/
+!streamlit_ui/**
+```
+
+Example commands after configuring the Git remote:
+
+```powershell
+git add README.md enable_original_ui.py streamlit_app.py streamlit_ui requirements.txt .gitignore
+git commit -m "Preserve original React UI in Streamlit"
+git push
+```
+
+Review staged changes before committing. Never include actual API keys.
+
+## Deploy on Streamlit Community Cloud
+
+1. Upload the project and compiled `streamlit_ui/` folder to GitHub.
+2. Open [Streamlit Community Cloud](https://share.streamlit.io/).
+3. Create an app using the repository and its actual branch.
+4. Set the main file path to:
+
+```text
+streamlit_app.py
+```
+
+5. Select Python **3.12**.
+6. Add private configuration in the app's Secrets settings:
+
+```toml
+LLM_PROVIDER = "groq"
+GROQ_API_KEY = "your_private_key_here"
+GROQ_MODEL = "openai/gpt-oss-120b"
+MIN_SCORE = "0.35"
+```
+
+7. Deploy.
+8. Check layout, scrolling, a cited answer, a Hindi question, and unsupported personal-status handling before sharing.
+
+Do not select `enable_original_ui.py`, `update_scheme_saathi.py`, or `app.py` as the Streamlit entry point.
+
+Node.js is not required on Cloud when the compiled component is committed.
+
+Hosting needs internet access to download the embedding model and contact the configured LLM provider.
+
+Hosted behavior of the final component version has not yet been verified.
 
 ## Docker and Hugging Face Alternative
 
@@ -580,11 +659,11 @@ docker build -t scheme-saathi .
 docker run --rm -p 7860:7860 --env-file .env scheme-saathi
 ```
 
-It does not launch Streamlit.
+The Dockerfile does not launch Streamlit.
 
-For Hugging Face, use a Docker Space with port 7860 and configure API keys as Space secrets.
+For a Hugging Face Docker Space, configure the appropriate Space metadata, port 7860, and private API secrets.
 
-Docker and hosted deployment have not been tested in the Streamlit workspace.
+Docker deployment has not been verified in the current component setup.
 
 ## Limitations
 
@@ -593,24 +672,28 @@ Docker and hosted deployment have not been tested in the Streamlit workspace.
 - No private application records or student-account access.
 - Citation-ID validation cannot guarantee semantic faithfulness.
 - Questions are independent; previous conversations are not evidence.
-- Streamlit chat history is session-only and may reset.
-- Scanned documents require OCR.
+- Browser history depends on local storage and is not a secure account system.
+- Streamlit iframe restrictions may affect clipboard or browser-specific behavior.
+- Frame styling and desktop scaling need checks across browsers and screen sizes.
+- Manual generated-file changes are overwritten when the UI helper rebuilds them.
+- Scanned PDFs require OCR.
 - Model startup, hosting resources, and API quotas affect availability.
-- No authentication, durable user database, or production abuse controls are included.
+- Authentication, durable user storage, and production abuse controls are not included.
 
 ## Future Improvements
 
+- Move manual layout fixes into a reproducible component build.
+- Test responsive behavior across browsers and mobile devices.
 - Add independently reviewed state and category-specific sources.
-- Introduce monitored document refresh and validity review.
+- Introduce monitored source refresh and validity review.
 - Improve retrieval with hybrid search and reranking.
-- Add OCR for scanned PDFs.
+- Add OCR for scanned documents.
 - Expand held-out multilingual evaluation.
 - Add independent claim-level citation review.
-- Add persistent accounts and history if required.
 - Introduce monitoring, quotas, and abuse controls for public hosting.
 
 ## License
 
 Project code is available under the MIT License.
 
-Government documents and model weights remain subject to their respective publishers' terms. 
+Government documents and model weights remain subject to their respective publishers' terms.

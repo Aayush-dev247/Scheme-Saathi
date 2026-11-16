@@ -14,3 +14,16 @@ venv/
 node_modules/
 .streamlit/secrets.toml
 *.zip
+# Keep credentials/backups private; commit compiled Streamlit component.
+.env
+.streamlit/secrets.toml
+/.scheme-saathi-backups/
+!streamlit_ui/
+!streamlit_ui/**
+
+# Keep credentials/backups private; commit compiled Streamlit component.
+.env
+.streamlit/secrets.toml
+/.scheme-saathi-backups/
+!streamlit_ui/
+!streamlit_ui/**
