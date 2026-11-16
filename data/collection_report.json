@@ -1,0 +1,33 @@
+[
+  {
+    "ok": true,
+    "url": "https://scholarships.gov.in/public/schemeGuidelines/CSSS_GUIDLINES_07022024_updated.pdf",
+    "requested_url": "https://scholarships.gov.in/public/schemeGuidelines/CSSS_GUIDLINES_07022024_updated.pdf",
+    "last_scraped": "2026-11-16T07:21:00.472572+00:00",
+    "sha256": "0c9e2041dd1b66b4ae0104fdb963c477acae517f183775f0880749ce4812c31b",
+    "status": "guidelines_unverified_cycle",
+    "document_date": null,
+    "robots_status": "absent_404_or_410",
+    "applicable_from": "2022-23",
+    "source": "0c9e2041dd1b.pdf",
+    "title": "PM-USP CSSS Guidelines \u2014 applicable from AY 2022-23"
+  },
+  {
+    "ok": true,
+    "url": "https://www.dtekerala.gov.in/static/GOVTCIRCULARS/Saraswati%20Yashasvi%20Scholarships.pdf",
+    "requested_url": "https://www.dtekerala.gov.in/static/GOVTCIRCULARS/Saraswati%20Yashasvi%20Scholarships.pdf",
+    "last_scraped": "2026-11-16T07:21:16.059246+00:00",
+    "sha256": "06b61ec2ff173a1725f1a947284b33203ebafcea7af41288e235645501857bdd",
+    "status": "guidelines_unverified_cycle",
+    "document_date": "2025-05-22",
+    "robots_status": "absent_404_or_410",
+    "applicable_from": "2024-25",
+    "source": "06b61ec2ff17.pdf",
+    "title": "AICTE Sarswati and Yashasvi Guidelines \u2014 official Kerala circular May 2025"
+  },
+  {
+    "ok": false,
+    "url": "https://sarswati.aicte.gov.in/login.php",
+    "error": "robots.txt returned HTML instead of robots rules; collection skipped"
+  }
+]

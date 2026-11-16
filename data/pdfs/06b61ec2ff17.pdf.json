@@ -1,0 +1,20 @@
+{
+  "url": "https://www.dtekerala.gov.in/static/GOVTCIRCULARS/Saraswati%20Yashasvi%20Scholarships.pdf",
+  "requested_url": "https://www.dtekerala.gov.in/static/GOVTCIRCULARS/Saraswati%20Yashasvi%20Scholarships.pdf",
+  "last_scraped": "2026-11-16T07:21:16.059246+00:00",
+  "sha256": "06b61ec2ff173a1725f1a947284b33203ebafcea7af41288e235645501857bdd",
+  "status": "guidelines_unverified_cycle",
+  "document_date": "2025-05-22",
+  "robots_status": "absent_404_or_410",
+  "applicable_from": "2024-25",
+  "source": "06b61ec2ff17.pdf",
+  "title": "AICTE Sarswati Guidelines for Girl Students (BBA/BCA/BMS) — official circular May 2025",
+  "include_pages": [
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "extraction_note": "Only physical PDF pages 10–14 (Sarswati annexure) indexed; original 14-page PDF retained unchanged."
+}

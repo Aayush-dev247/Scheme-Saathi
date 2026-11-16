@@ -1,0 +1,28 @@
+[
+  {
+    "url": "https://scholarships.gov.in/public/schemeGuidelines/CSSS_GUIDLINES_07022024_updated.pdf",
+    "title": "PM-USP CSSS Guidelines — applicable from AY 2022-23",
+    "document_date": null,
+    "applicable_from": "2022-23",
+    "status": "guidelines_unverified_cycle"
+  },
+  {
+    "url": "https://www.dtekerala.gov.in/static/GOVTCIRCULARS/Saraswati%20Yashasvi%20Scholarships.pdf",
+    "title": "AICTE Sarswati Guidelines for Girl Students (BBA/BCA/BMS) — official circular May 2025",
+    "document_date": "2025-05-22",
+    "applicable_from": "2024-25",
+    "status": "guidelines_unverified_cycle",
+    "include_pages": [
+      10,
+      11,
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "url": "https://sarswati.aicte.gov.in/login.php",
+    "title": "AICTE Sarswati public portal",
+    "status": "unverified"
+  }
+]

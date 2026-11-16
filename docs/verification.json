@@ -1,0 +1,23 @@
+{
+  "backend_tests": {
+    "passed": 29,
+    "failed": 0
+  },
+  "frontend_production_build": "passed",
+  "dependency_check": "passed",
+  "real_index_chunks": 16,
+  "real_pdf_pages": 7,
+  "live_llm_tested": false,
+  "docker_tested": false,
+  "hugging_face_deployed": false,
+  "desktop_browser_checks": [
+    "chat response",
+    "citation passage",
+    "physical PDF page link",
+    "dark and light modes",
+    "new chat",
+    "history reopen",
+    "clipboard content"
+  ],
+  "mobile_device_tested": false
+}

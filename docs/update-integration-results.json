@@ -1,0 +1,102 @@
+{
+  "health": {
+    "chunks": 25,
+    "error": null,
+    "index_ready": true,
+    "llm_configured": false,
+    "model_ready": true,
+    "provider": "groq",
+    "status": "ok"
+  },
+  "checked_at": "2026-11-16T07:25:04.010263+00:00",
+  "live_llm_tested": false,
+  "checks": [
+    {
+      "question": "BCA students ke liye scholarship kaunsi hai?",
+      "mode": "extractive",
+      "seconds": 0.0288,
+      "sources": [
+        {
+          "source": "06b61ec2ff17.pdf",
+          "page": 14,
+          "score": 0.6118
+        },
+        {
+          "source": "06b61ec2ff17.pdf",
+          "page": 11,
+          "score": 0.599
+        },
+        {
+          "source": "06b61ec2ff17.pdf",
+          "page": 11,
+          "score": 0.452
+        },
+        {
+          "source": "0c9e2041dd1b.pdf",
+          "page": 1,
+          "score": 0.5709
+        }
+      ]
+    },
+    {
+      "question": "Which scholarships explicitly include BCA?",
+      "mode": "extractive",
+      "seconds": 0.0179,
+      "sources": [
+        {
+          "source": "06b61ec2ff17.pdf",
+          "page": 11,
+          "score": 0.622
+        },
+        {
+          "source": "06b61ec2ff17.pdf",
+          "page": 14,
+          "score": 0.6085
+        },
+        {
+          "source": "0c9e2041dd1b.pdf",
+          "page": 1,
+          "score": 0.5334
+        },
+        {
+          "source": "06b61ec2ff17.pdf",
+          "page": 11,
+          "score": 0.3817
+        }
+      ]
+    },
+    {
+      "question": "बीसीए छात्रों के लिए कौन सी छात्रवृत्ति है?",
+      "mode": "extractive",
+      "seconds": 0.0177,
+      "sources": [
+        {
+          "source": "06b61ec2ff17.pdf",
+          "page": 11,
+          "score": 0.5779
+        },
+        {
+          "source": "06b61ec2ff17.pdf",
+          "page": 14,
+          "score": 0.5517
+        },
+        {
+          "source": "06b61ec2ff17.pdf",
+          "page": 11,
+          "score": 0.3801
+        },
+        {
+          "source": "0c9e2041dd1b.pdf",
+          "page": 1,
+          "score": 0.5031
+        }
+      ]
+    },
+    {
+      "question": "Mera scholarship application status kya hai?",
+      "mode": "not_found",
+      "seconds": 0.0005,
+      "sources": []
+    }
+  ]
+}
